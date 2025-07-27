@@ -1,13 +1,21 @@
 import { useTheme } from "../common/ThemeContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Rubik from '../assets/rubik.png'
 import LoginSignUp from '../pages/LoginSignup'
+
 
 import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+ const [isUserLoggedIn, setIsUserLoggedIn] =  useState(false)
 
-
+ useEffect(() => {
+   const details = JSON.parse(localStorage.getItem("details"));
+   const user = details?.user;
+    if(user){
+        setIsUserLoggedIn(true)
+      }
+  }, []); // Run only once on component mount
 
  const { theme, toggleTheme } = useTheme();
 
@@ -29,7 +37,7 @@ export default function Navbar() {
 
       
         <div className="hidden md:flex gap-4 items-center">
-          <button onClick={navigateToLoginPage} className="px-4 py-2 rounded dark:bg-brand-button-bg text-white bg-brand-button-bg border-none transition dark:hover:bg-brand-button-hover-bg hover:bg-brand-button-hover-bg">
+          <button style={{"display": isUserLoggedIn? "none" : "block"}} onClick={navigateToLoginPage} className="px-4 py-2 rounded dark:bg-brand-button-bg text-white bg-brand-button-bg border-none transition dark:hover:bg-brand-button-hover-bg hover:bg-brand-button-hover-bg">
             Login/Sign Up
           </button>
           <button

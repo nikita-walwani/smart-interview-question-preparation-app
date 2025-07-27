@@ -1,5 +1,7 @@
 import { data } from "react-router-dom"
 import axios from "./axios"
+import backendBaseUrl from "./axios";
+
 
 const getAuthHeader = () => {
   const token = localStorage.getItem('access_token');
@@ -11,9 +13,9 @@ const getAuthHeader = () => {
 };
 
 export const loginApi = async (data) => {
-  return await axios.post('/login', data);
+  return await backendBaseUrl.post('/login', data);
 };
 
 export const signUp = async(data)=>{
- return await axios.post('/signup', data)
+ return await backendBaseUrl.post('/signup', data)
 }
