@@ -5,8 +5,16 @@ import React, { useRef } from "react";
 import { loginApi, signUp } from "../apis/auth";
 import { data } from "react-router-dom";
 import { AiOutlineWarning } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+
 
 export default function LoginSignUp() {
+  //set defautl theme
+  const currentTheme = localStorage.getItem("theme")
+  localStorage.clear()
+  localStorage.setItem("theme",currentTheme)
+
+  // 
   const [login, setlogin] = useState(false)
   const usernameRef =  useRef();
   const emailRef = useRef();
@@ -14,8 +22,11 @@ export default function LoginSignUp() {
   const errorRef = useRef()
   const [isError, errorOccured] = useState(false)
   const [errorMsg, setErrorMsg] = useState("");
+  const navigate = useNavigate()
 
   const signupLogin=async(e)=>{
+    errorOccured(false)
+
     e.preventDefault();
     if(!login){
     const data = {
@@ -24,14 +35,20 @@ export default function LoginSignUp() {
       "password":passwordRef.current.value
     }
         try {
+          
           const res = await signUp(data)
-          localStorage.setItem({"detail":{"access_token":res.token,"type":res.token_type}})
+          localStorage.setItem("details", JSON.stringify({
+        access_token: res.data.token,
+        type: res.token_type
+      }));
+          setlogin(true)
+
           
         }
         
         catch(err){
             errorOccured(true)
-            setErrorMsg(err.message)
+            setErrorMsg(err.response.data.detail)
         }}
     
         if(login){
@@ -39,17 +56,17 @@ export default function LoginSignUp() {
           "email":emailRef.current.value,
           "password":passwordRef.current.value
          }
-         console.log(data)
+         
         try {
           const res = await loginApi(data)
-          console.log(res)
-          localStorage.setItem({"detail":{"access_token":res.token,"type":res.token_type}})
+          localStorage.setItem("details", JSON.stringify(res.data))
+          navigate('/dashboard')
+          
           
         }
         catch(err){
             errorOccured(true)
-           
-            setErrorMsg(err.message)
+            setErrorMsg(err.response.data.detail)
         }}
       
 }
